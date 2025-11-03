@@ -20,9 +20,10 @@ type Song = {
 };
 
 const playlist: Song[] = [
-  { id: 1, title: "Dil Cheez Tujhe Dedi", file: Music1, cover: Cover1 },
+  { id: 1, title: "Finding Pragati", file: Music1, cover: Cover1 },
   { id: 2, title: "If The World Was Ending", file: Music2, cover: Cover2 },
   { id: 3, title: "Dil Jo Tumhara Hai", file: Music3, cover: Cover3 },
+  
 ];
 
 export default function PlaylistPage({ onBack, onNext }: Props) {

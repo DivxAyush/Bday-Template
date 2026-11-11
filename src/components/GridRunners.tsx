@@ -54,9 +54,9 @@ export default function GridRunners() {
 
     window.addEventListener("resize", handleResize);
 
-    // Number of active hearts
+    // Number of active hearts (subtle, clean, and elegant)
     const isMobile = width < 768;
-    const PARTICLE_COUNT = isMobile ? 14 : 26;
+    const PARTICLE_COUNT = isMobile ? 6 : 10;
 
     const createHeart = (spawnRandomLocation = true): HeartParticle => {
       const maxCols = Math.max(1, Math.floor(width / GRID_SIZE));

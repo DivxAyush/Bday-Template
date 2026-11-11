@@ -1,39 +1,8 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-
-const CupidBowIcon = () => (
-  <motion.svg
-    width="40"
-    height="40"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className="drop-shadow-sm"
-    animate={{ rotate: [0, -8, 8, 0] }}
-    transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-  >
-    <path d="M13 2.1c4.6 3.4 5.9 10.2 3.1 14.8-2.1 3.4-6.2 5.1-10.2 4.3-.4-2.4.4-4.8 2.2-6.5C10 13 11.4 12.1 13 11.1" />
-    <path d="M13 11.1c-3.1-2.9-4.3-7.5-2.2-10.8" />
-    <path d="m14.5 12.5 6 6" />
-    <path d="m18 16 2.5 2.5" />
-  </motion.svg>
-);
-
-const HeartArrowIcon = () => (
-  <motion.svg
-    width="40"
-    height="40"
-    viewBox="0 0 24 24"
-    fill="currentColor"
-    animate={{ scale: [1, 1.1, 1] }}
-    transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-  >
-    <path d="M12.003 21.352c-.347-.19-8.32-4.88-8.32-11.446 0-3.08 2.498-5.578 5.578-5.578 1.83 0 3.538.88 4.618 2.26a4.954 4.954 0 0 1 4.618-2.26c3.08 0 5.578 2.498 5.578 5.578 0 6.565-7.972 11.255-8.32 11.446a.998.998 0 0 1-1.092 0z" />
-  </motion.svg>
-);
+import confetti from "canvas-confetti";
+import { textConfig } from "../textConfig";
+import { sounds } from "../utils/soundEffects";
 
 type Props = {
   title?: string;
@@ -44,155 +13,208 @@ type Props = {
 };
 
 export default function CutePhotoGallery({
-  title = "Special Photo Cards",
-  photos,
-  captions,
+  title = textConfig?.gallery?.title || "Golden Memories & Smiles 📸",
+  photos = [],
+  captions = textConfig?.gallery?.captions || [],
   onBack,
   onNext,
 }: Props) {
   const [index, setIndex] = useState(0);
-  const nextPhoto = () => setIndex((prev) => (prev + 1) % photos.length);
-  const prevPhoto = () => setIndex((prev) => (prev - 1 + photos.length) % photos.length);
+  const [likes, setLikes] = useState<{ [key: number]: number }>({ 0: 12, 1: 18, 2: 24 });
+
+  const cfg = textConfig?.gallery || {};
+  const stickers = cfg.stickers && cfg.stickers.length > 0 
+    ? cfg.stickers 
+    : ["CANDID MOMENTS", "ICONIC VIBES", "PURE JOY"];
+
+  const safePhotos = photos.length > 0 ? photos : [];
+
+  const nextPhoto = () => {
+    if (safePhotos.length === 0) return;
+    sounds.playPop();
+    setIndex((prev) => (prev + 1) % safePhotos.length);
+  };
+
+  const prevPhoto = () => {
+    if (safePhotos.length === 0) return;
+    sounds.playPop();
+    setIndex((prev) => (prev - 1 + safePhotos.length) % safePhotos.length);
+  };
+
+  const handleLike = () => {
+    sounds.playPop();
+    setLikes((prev) => ({
+      ...prev,
+      [index]: (prev[index] || 15) + 1,
+    }));
+
+    confetti({
+      particleCount: 20,
+      spread: 45,
+      origin: { y: 0.65 },
+      colors: ["#ff4d6d", "#ff758f", "#ff8fa3", "#ffb3c1"],
+    });
+  };
 
   return (
-    <div className="relative min-h-screen flex flex-col justify-center items-center bg-[#FBF5F4] p-2 sm:p-4 overflow-hidden">
-      {/* Background */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_#fff8f8_0%,_#fce4ec_100%)] opacity-90 pointer-events-none" />
-      <div className="absolute inset-0 bg-[url('/paper-texture.png')] opacity-10 mix-blend-multiply pointer-events-none" />
+    <div className="w-full h-full max-h-screen flex flex-col justify-between items-center bg-[#FBF5F4] px-4 py-2 sm:py-3 relative overflow-hidden select-none">
+      {/* Background Gradient */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_#fff8f8_0%,_#fbebeb_60%,_#f5dfdc_100%)] pointer-events-none" />
 
-      {/* Card */}
+      {/* Top Banner */}
+      <div className="w-full max-w-md flex justify-between items-center text-[10px] sm:text-xs tracking-wider text-[#8e7571] uppercase font-semibold relative z-10 px-1 whitespace-nowrap">
+        <span>MEMORIES CHAPTER</span>
+        <span className="text-[#d84b5a] font-bold">★ HIGHLIGHTS ★</span>
+      </div>
+
+      {/* --- COMPACT POLAROID CARD --- */}
       <motion.div
         initial={{ opacity: 0, scale: 0.97 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.6 }}
-        className="relative w-full max-w-[720px] rounded-2xl border-[2px] border-[#e7d8d2] bg-white/80 shadow-2xl flex flex-col overflow-hidden backdrop-blur-sm"
-        style={{ fontFamily: "'Playfair Display', serif" }}
+        transition={{ duration: 0.5 }}
+        className="relative w-full max-w-[420px] rounded-3xl border border-[#ecd5d1] bg-white/90 shadow-xl flex flex-col overflow-hidden backdrop-blur-md my-auto z-10 p-3 sm:p-4"
       >
-        {/* Header */}
-        <div className="px-8 sm:px-10 pt-6 text-[#2c2c2c]">
-          <motion.h1
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-[clamp(1.8rem,6vw,3.2rem)] leading-none text-[#d84b5a] font-semibold text-center"
+        {/* Washi Tape */}
+        <div className="absolute -top-2.5 left-8 w-16 h-5 bg-[#ffd6df]/80 border-t border-b border-[#f3bac6] -rotate-3 z-30 shadow-xs pointer-events-none" />
+        <div className="absolute -top-2.5 right-8 w-16 h-5 bg-[#fae1dd]/80 border-t border-b border-[#ebd0cb] rotate-3 z-30 shadow-xs pointer-events-none" />
+
+        {/* Card Header */}
+        <div className="text-center pt-1 pb-1">
+          <h1
+            className="text-base sm:text-lg text-[#d84b5a] font-bold tracking-tight"
+            style={{ fontFamily: "'Playfair Display', serif" }}
           >
             {title}
-          </motion.h1>
-          <div className="mt-3 border-t-2 border-b-2 border-[#222]/20"></div>
-          <div
-            className="flex justify-between mt-2 text-xs sm:text-sm text-[#444]"
-            style={{ fontFamily: "'Cormorant Garamond', serif" }}
-          >
-            <span><span className="font-bold">FROM:</span> Me</span>
-            <span><span className="font-bold">TO:</span> My Rasmalai</span>
+          </h1>
+
+          <div className="mt-1 border-t border-b border-[#ebd5d1] py-0.5 flex justify-between text-[10px] sm:text-xs text-[#7a6460]">
+            <span><b>{cfg.fromLabel || "FROM: Me"}</b></span>
+            <span><b className="text-[#d84b5a]">{cfg.toLabel || "TO: Birthday Girl 👑"}</b></span>
           </div>
         </div>
 
-        {/* Gallery Frame */}
-        <div className="mx-6 sm:mx-8 my-4 border-[2px] border-[#2c2c2c]/30 rounded-xl bg-[#faf4f3] flex-1 relative overflow-hidden flex flex-col items-center justify-center p-3">
-          <div className="relative w-full aspect-[4/3] flex items-center justify-center overflow-hidden">
-            <AnimatePresence mode="wait">
-              <motion.img
-                key={index}
-                src={photos[index]}
-                alt={`Photo ${index + 1}`}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.8, ease: "easeInOut" }}
-                className="absolute inset-0 w-full h-full object-cover rounded-xl shadow-xl ring-1 ring-[#d84b5a]/30"
-              />
-            </AnimatePresence>
+        {/* Photo Container */}
+        <div className="my-1.5 p-2 bg-[#fdf9f8] border border-[#f0deda] rounded-2xl relative flex flex-col items-center">
+          <div className="absolute top-3 left-3 z-20 bg-white/90 border border-[#f0c2cd] text-[#c03d4a] text-[9px] font-bold px-2 py-0.2 rounded-full shadow-xs">
+            ★ {stickers[index % stickers.length]} ★
           </div>
 
-          {/* Caption */}
-          <div className="absolute bottom-3 left-0 right-0 flex items-center justify-center px-4">
-            <AnimatePresence mode="wait">
-              {captions && captions[index] && (
-                <motion.p
+          {/* Photo Frame */}
+          <div className="relative w-full aspect-[16/10] max-h-[200px] sm:max-h-[220px] flex items-center justify-center overflow-hidden rounded-xl bg-white shadow-inner border border-[#f0e2df]">
+            {safePhotos.length > 0 ? (
+              <AnimatePresence mode="wait">
+                <motion.img
                   key={index}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.4, ease: "easeInOut" }}
-                  className="text-[clamp(1rem,2vw,1.3rem)] text-[#d84b5a] italic drop-shadow-sm"
-                  style={{ fontFamily: "'Dancing Script', cursive" }}
+                  src={safePhotos[index]}
+                  alt={`Memory ${index + 1}`}
+                  initial={{ opacity: 0, scale: 0.98 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 1.02 }}
+                  transition={{ duration: 0.35 }}
+                  className="w-full h-full object-cover select-none"
+                />
+              </AnimatePresence>
+            ) : (
+              <div className="text-gray-400 text-xs">No photos</div>
+            )}
+
+            {safePhotos.length > 1 && (
+              <>
+                <button
+                  onClick={prevPhoto}
+                  className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-[#d84b5a] text-[#d84b5a] hover:text-white border border-[#f5c6cf] rounded-full w-7 h-7 flex items-center justify-center text-sm font-bold shadow-xs transition-all backdrop-blur-sm z-20"
                 >
-                  {captions[index]}
-                </motion.p>
-              )}
-            </AnimatePresence>
+                  ‹
+                </button>
+                <button
+                  onClick={nextPhoto}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-[#d84b5a] text-[#d84b5a] hover:text-white border border-[#f5c6cf] rounded-full w-7 h-7 flex items-center justify-center text-sm font-bold shadow-xs transition-all backdrop-blur-sm z-20"
+                >
+                  ›
+                </button>
+              </>
+            )}
           </div>
 
-          {/* Decorative icons */}
-          <div className="absolute left-3 top-3 text-[#e74c5b] opacity-30">
-            <CupidBowIcon />
-          </div>
-          <div className="absolute right-3 bottom-3 text-[#e74c5b] opacity-50">
-            <HeartArrowIcon />
+          {/* Caption & Like Row */}
+          <div className="w-full px-1 pt-1.5 flex justify-between items-center gap-1.5">
+            <p
+              className="text-xs sm:text-sm text-[#d84b5a] font-semibold truncate"
+              style={{ fontFamily: "'Dancing Script', cursive" }}
+            >
+              "{captions?.[index] || "A special birthday memory 💖"}"
+            </p>
+
+            <motion.button
+              onClick={handleLike}
+              whileHover={{ scale: 1.06 }}
+              whileTap={{ scale: 0.92 }}
+              className="bg-[#fff0f3] hover:bg-[#ffe0e6] border border-[#f5b8c9] text-[#c03d4a] px-2.5 py-0.5 rounded-full text-[10px] font-semibold shadow-xs transition-all flex items-center gap-1 whitespace-nowrap"
+              style={{ fontFamily: "'Montserrat', sans-serif" }}
+            >
+              <span>❤️</span>
+              <span>{likes[index] || 15}</span>
+            </motion.button>
           </div>
 
-          {/* Navigation */}
-          <button
-            onClick={prevPhoto}
-            className="absolute left-3 top-1/2 -translate-y-1/2 bg-[#fff5f4]/70 border border-[#d84b5a]/50 rounded-full w-9 h-9 flex items-center justify-center text-lg text-[#d84b5a] hover:bg-[#d84b5a] hover:text-white transition-all duration-300 shadow-sm backdrop-blur-md"
-          >
-            ‹
-          </button>
-          <button
-            onClick={nextPhoto}
-            className="absolute right-3 top-1/2 -translate-y-1/2 bg-[#fff5f4]/70 border border-[#d84b5a]/50 rounded-full w-9 h-9 flex items-center justify-center text-lg text-[#d84b5a] hover:bg-[#d84b5a] hover:text-white transition-all duration-300 shadow-sm backdrop-blur-md"
-          >
-            ›
-          </button>
+          {/* Dots Indicator */}
+          {safePhotos.length > 1 && (
+            <div className="flex gap-1 mt-1">
+              {safePhotos.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => {
+                    sounds.playPop();
+                    setIndex(i);
+                  }}
+                  className={`h-1.5 rounded-full transition-all duration-200 ${
+                    i === index ? "w-4 bg-[#d84b5a]" : "w-1.5 bg-[#ecd5d1]"
+                  }`}
+                />
+              ))}
+            </div>
+          )}
         </div>
 
-        {/* Footer */}
-        <div className="px-8 sm:px-10 pb-6 pt-3 border-t-[1.5px] border-[#2c2c2c]/20 text-[#2c2c2c]">
-          <div className="flex justify-between items-end">
-            <div className="text-xs sm:text-sm" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
-              <div><span className="font-bold">DATE:</span> Now</div>
-              <div><span className="font-bold">VALID FOR:</span> Forever</div>
-            </div>
-            <div className="text-right">
-              <span
-                className="block text-base sm:text-lg text-[#d84b5a]"
-                style={{ fontFamily: "'Dancing Script', cursive" }}
-              >
-                with love,Pragati Ji 💌
-              </span>
-            </div>
+        {/* Card Footer */}
+        <div className="pt-1 text-[10px] text-[#7a6460] flex justify-between items-center border-t border-[#ebd5d1]/60">
+          <div><span className="font-bold">EDITION:</span> Birthday Special</div>
+          <div className="text-[#d84b5a] font-semibold" style={{ fontFamily: "'Dancing Script', cursive" }}>
+            with love & joy 🌸
           </div>
         </div>
       </motion.div>
 
-      {/* Back / Next Buttons */}
-      {onBack && (
-        <motion.button
-          onClick={onBack}
-          whileTap={{ scale: 0.95 }}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="absolute bottom-3 left-3 sm:bottom-6 sm:left-6 text-gray-700 bg-[#9EC1E6] px-5 py-2 rounded-full text-sm shadow-md hover:bg-[#7fa8ce] transition-all z-20"
-          style={{ fontFamily: "Montserrat, system-ui, sans-serif" }}
-        >
-          ← Back
-        </motion.button>
-      )}
-      {onNext && (
-        <motion.button
-          onClick={onNext}
-          whileTap={{ scale: 0.95 }}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="absolute bottom-3 right-3 sm:bottom-6 sm:right-6 text-gray-700 bg-[#F7D9E6] px-5 py-2 rounded-full text-sm shadow-md hover:bg-[#F7B5CF] transition-all z-20"
-          style={{ fontFamily: "Montserrat, system-ui, sans-serif" }}
-        >
-          Next →
-        </motion.button>
-      )}
+      {/* --- BOTTOM BUTTONS --- */}
+      <div className="flex justify-between items-center w-full max-w-[420px] mb-1 sm:mb-2 px-1 relative z-20">
+        {onBack && (
+          <motion.button
+            onClick={() => {
+              sounds.playPop();
+              onBack();
+            }}
+            whileTap={{ scale: 0.95 }}
+            className="text-[#5c4946] bg-white border border-[#e2cdc9] px-5 py-1.5 rounded-full text-xs shadow-xs hover:bg-[#faeae7] transition-all font-medium"
+            style={{ fontFamily: "'Montserrat', sans-serif" }}
+          >
+            ← Back
+          </motion.button>
+        )}
+
+        {onNext && (
+          <motion.button
+            onClick={() => {
+              sounds.playPop();
+              onNext();
+            }}
+            whileTap={{ scale: 0.95 }}
+            className="text-white bg-[#d84b5a] hover:bg-[#c03d4a] px-5 py-1.5 rounded-full text-xs shadow-sm transition-all font-medium ml-auto"
+            style={{ fontFamily: "'Montserrat', sans-serif" }}
+          >
+            {cfg.nextButton || "Next →"}
+          </motion.button>
+        )}
+      </div>
     </div>
   );
 }

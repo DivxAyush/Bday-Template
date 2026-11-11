@@ -2,12 +2,38 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Hide scrollbar but keep functionality */
+html, body, #root {
+  height: 100%;
+  height: 100dvh;
+  width: 100%;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  background-color: #fbf5f4;
+}
+
+/* Designer Grid System Pattern */
+.bg-grid-system {
+  background-color: #faf3f1;
+  background-image: 
+    linear-gradient(to right, rgba(225, 145, 160, 0.15) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(225, 145, 160, 0.15) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* Secondary Micro Grid for cards */
+.bg-subtle-grid {
+  background-image: 
+    linear-gradient(to right, rgba(210, 140, 155, 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(210, 140, 155, 0.08) 1px, transparent 1px);
+  background-size: 16px 16px;
+}
+
+/* Hide scrollbar completely */
 ::-webkit-scrollbar {
   display: none;
 }
 
-/* Enable smooth scrolling and hide scrollbars for Firefox */
 * {
   scrollbar-width: none;
   -ms-overflow-style: none;

@@ -1,7 +1,10 @@
 import React from "react";
 import { motion } from "framer-motion";
-import StampSvg from "../svg/StampSVG"; // ← use your SVG component here
-import LetterPNG from "../images/letter.png"
+import confetti from "canvas-confetti";
+import StampSvg from "../svg/StampSVG";
+import LetterPNG from "../images/letter.png";
+import { textConfig } from "../textConfig";
+import { sounds } from "../utils/soundEffects";
 
 type Props = {
   onBack?: () => void;
@@ -9,130 +12,131 @@ type Props = {
 };
 
 export default function LoveLetter({ onBack, onNext }: Props) {
-  const fadeUp = {
-    hidden: { opacity: 0, y: 25 },
-    visible: (delay: number) => ({
-      opacity: 1,
-      y: 0,
-      transition: { delay, duration: 0.8, ease: "easeOut" },
-    }),
+  const cfg = textConfig.letter;
+
+  const handleSprinkle = () => {
+    sounds.playChime();
+    confetti({
+      particleCount: 35,
+      spread: 50,
+      origin: { y: 0.5 },
+      shapes: ["circle", "star"],
+      colors: ["#ffd166", "#f28ba2", "#ffadad", "#ffd6a5"],
+    });
   };
 
   return (
-    <div className="w-full min-h-screen flex flex-col justify-between items-center bg-[#FBF5F4] p-4 sm:p-6 relative overflow-hidden">
-      {/* Soft gradient background */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_#fff8f8_0%,_#fbe9e9_100%)] opacity-90 pointer-events-none" />
+    <div className="w-full h-full max-h-[100dvh] flex flex-col justify-between items-center px-4 py-2 sm:py-3 relative overflow-hidden select-none">
+      {/* Background radial glow */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_#fff8f8_0%,_#fbe9eb_60%,_#f5dedc_100%)] opacity-95 pointer-events-none" />
 
-      {/* --- CENTERED CONTENT --- */}
-      <div className="flex-grow flex items-center justify-center w-full relative z-10">
+      {/* --- CENTERED LETTER CARD --- */}
+      <div className="flex items-center justify-center w-full relative z-10 flex-grow my-auto">
         <motion.div
-          initial={{ opacity: 0, scale: 0.97 }}
+          initial={{ opacity: 0, scale: 0.96 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6 }}
-          className="relative w-full max-w-2xl bg-white/85 rounded-2xl shadow-xl border border-[#f1dede] px-6 py-10 sm:px-10 flex flex-col items-center text-center backdrop-blur-sm"
+          transition={{ duration: 0.5 }}
+          className="relative w-full max-w-lg bg-white/90 rounded-3xl shadow-xl border border-[#eedad7] px-5 py-4 sm:px-8 sm:py-5 flex flex-col items-center text-center backdrop-blur-md"
         >
-          {/* Decorative pinned photo */}
-          <motion.div
-            initial={{ rotate: 6, opacity: 0 }}
-            animate={{ rotate: 6, opacity: 1 }}
-            transition={{ delay: 0.4 }}
-            className="absolute top-[-30px] right-[-25px] w-[110px] sm:w-[130px] rotate-3 overflow-hidden"
-          >
-            <img
-              src={LetterPNG}
-              alt="Memory"
-              className="w-full h-full object-cover"
-            />
-          </motion.div>
+          {/* Decorative pinned photo (compact) */}
+          <div className="absolute -top-4 -right-2 sm:-top-5 sm:-right-3 w-16 sm:w-20 rotate-6 overflow-hidden rounded-xl shadow-md border-2 border-white bg-white p-0.5 pointer-events-none">
+            <div className="w-full h-14 sm:h-16 overflow-hidden rounded-lg">
+              <img
+                src={LetterPNG}
+                alt="Birthday Memory"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div
+              className="text-[8px] text-[#8e7571] text-center pt-0.5 font-semibold"
+              style={{ fontFamily: "'Dancing Script', cursive" }}
+            >
+              Happy B'day! ✨
+            </div>
+          </div>
 
-          {/* Stamp in corner */}
-          <motion.div
-            initial={{ opacity: 0, rotate: -10, scale: 0.9 }}
-            animate={{ opacity: 1, rotate: -10, scale: 1 }}
-            transition={{ delay: 0.8 }}
-            className="absolute bottom-[-25px] left-[-25px]"
-          >
-            <StampSvg />
-          </motion.div>
+          {/* Stamp in bottom left corner (compact) */}
+          <div className="absolute -bottom-4 -left-3 sm:-bottom-5 sm:-left-4 pointer-events-none">
+            <StampSvg size={75} topText="BIRTHDAY" bottomText="WISHES" color="#d84b5a" />
+          </div>
 
           {/* Header */}
-          <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            animate="visible"
-            custom={0.1}
-            className="mb-6"
-          >
-            <h1
-              className="tracking-[0.2em] text-gray-700 uppercase font-semibold"
-              style={{
-                fontFamily: "Montserrat, sans-serif",
-                fontSize: "clamp(0.9rem, 1.5vw, 1rem)",
-              }}
+          <div className="mb-2">
+            <span
+              className="tracking-[0.2em] text-[#8e7571] uppercase font-bold text-[9px] sm:text-[10px]"
+              style={{ fontFamily: "'Montserrat', sans-serif" }}
             >
-              A LETTER
-            </h1>
+              {cfg.tagline}
+            </span>
             <h2
-              className="text-[#F7B5CF] uppercase font-black leading-none mt-[2px]"
-              style={{
-                fontFamily: "Playfair Display, serif",
-                fontSize: "clamp(1.4rem, 2.8vw, 2rem)",
-              }}
+              className="text-[#d84b5a] uppercase font-black leading-tight text-base sm:text-xl tracking-wide"
+              style={{ fontFamily: "'Playfair Display', serif" }}
             >
-              For You ✦
+              {cfg.title} ✦
             </h2>
-          </motion.div>
+            <div className="w-12 h-0.5 bg-[#f5b8c9] mx-auto mt-1 rounded-full" />
+          </div>
 
-          {/* Letter content */}
-          <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            animate="visible"
-            custom={0.3}
-            className="max-w-md space-y-4"
-          >
+          {/* Letter Body */}
+          <div className="max-w-md space-y-2 text-left my-1">
             <h3
-              className="text-[#F7B5CF] italic font-semibold"
-              style={{
-                fontFamily: "Playfair Display, serif",
-                fontSize: "clamp(1.2rem, 2vw, 1.5rem)",
-              }}
+              className="text-[#d84b5a] italic font-semibold text-sm sm:text-base"
+              style={{ fontFamily: "'Playfair Display', serif" }}
             >
-              My Dearest Pragati JI,
+              {cfg.salutation}
             </h3>
 
-            <p
-              className="text-gray-800 text-[clamp(13px,1.3vw,15px)] leading-relaxed"
-              style={{ fontFamily: "Montserrat, sans-serif" }}
-            >
-              I’m sorry for the moments I hurt you. You mean everything to me —
-              and I just want your smile back. 💗
-            </p>
+            {cfg.paragraphs.map((p, i) => (
+              <p
+                key={i}
+                className="text-[#4a3937] text-[11px] sm:text-xs leading-relaxed"
+                style={{ fontFamily: "'Montserrat', sans-serif" }}
+              >
+                {p}
+              </p>
+            ))}
 
-            <h4
-              className="text-[#1f1f1f] italic font-semibold"
-              style={{
-                fontFamily: "Playfair Display, serif",
-                fontSize: "clamp(1rem, 2vw, 1.3rem)",
-              }}
-            >
-              With all my love — Pragati Ji💌
-            </h4>
-          </motion.div>
+            <div className="pt-1 text-right">
+              <p
+                className="text-[10px] text-[#8e7571] italic leading-tight"
+                style={{ fontFamily: "'Playfair Display', serif" }}
+              >
+                {cfg.closing}
+              </p>
+              <h4
+                className="text-[#d84b5a] text-base sm:text-lg font-bold leading-tight"
+                style={{ fontFamily: "'Dancing Script', cursive" }}
+              >
+                {cfg.signature}
+              </h4>
+            </div>
+          </div>
+
+          {/* Sprinkle Sparkles Interactive Button */}
+          <motion.button
+            onClick={handleSprinkle}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="mt-2 bg-[#fff0f3] border border-[#f5b8c9] text-[#c03d4a] hover:bg-[#ffe4ec] px-3.5 py-1 rounded-full text-[10px] sm:text-xs font-semibold shadow-xs transition-all flex items-center gap-1"
+            style={{ fontFamily: "'Montserrat', sans-serif" }}
+          >
+            <span>✨</span>
+            <span>{cfg.sprinkleButton}</span>
+          </motion.button>
         </motion.div>
       </div>
 
-      {/* --- BUTTONS --- */}
-      <div className="flex justify-between items-center w-full max-w-2xl px-6 mb-6 z-20">
+      {/* --- NAVIGATION BUTTONS --- */}
+      <div className="flex justify-between items-center w-full max-w-lg mb-2 sm:mb-3 px-2 z-20 pb-1">
         {onBack && (
           <motion.button
-            onClick={onBack}
+            onClick={() => {
+              sounds.playPop();
+              onBack();
+            }}
             whileTap={{ scale: 0.95 }}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
-            className="text-gray-700 bg-[#9EC1E6] px-6 py-2.5 rounded-full text-sm sm:text-base shadow-sm hover:bg-[#7fa8ce] transition-all"
-            style={{ fontFamily: "Montserrat, sans-serif" }}
+            className="text-[#5c4946] bg-white border border-[#e2cdc9] px-5 py-1.5 rounded-full text-xs shadow-xs hover:bg-[#faeae7] transition-all font-medium"
+            style={{ fontFamily: "'Montserrat', sans-serif" }}
           >
             ← Back
           </motion.button>
@@ -140,13 +144,13 @@ export default function LoveLetter({ onBack, onNext }: Props) {
 
         {onNext && (
           <motion.button
-            onClick={onNext}
+            onClick={() => {
+              sounds.playPop();
+              onNext();
+            }}
             whileTap={{ scale: 0.95 }}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
-            className="text-gray-700 bg-[#F7D9E6] px-6 py-2.5 rounded-full text-sm sm:text-base shadow-sm hover:bg-[#F7B5CF] transition-all"
-            style={{ fontFamily: "Montserrat, sans-serif" }}
+            className="text-white bg-[#d84b5a] hover:bg-[#c03d4a] px-5 py-1.5 rounded-full text-xs shadow-sm transition-all font-medium ml-auto"
+            style={{ fontFamily: "'Montserrat', sans-serif" }}
           >
             Next →
           </motion.button>

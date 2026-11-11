@@ -1,86 +1,55 @@
-# Website - Customization Guide
+# 🎂 Birthday Website - Customization Guide
 
 ## Setup Instructions
 
 ### 1. Install Required Software
-VS Code Installation:
-- Tutorial: https://youtu.be/3eCmc0t6aqA?si=TkV0bVEz_95FbMmi
+- **Node.js** (LTS version)
+- **VS Code**
 
-Node.js Installation:
-- Tutorial: https://youtu.be/uCgAuOYpJd0?si=2ICwr3Ih1P_ru9KA
-
-Git Bash Installation:
-- Tutorial: https://www.youtube.com/watch?v=iHlWb23yj6E
-
-⚠️ VS Code, Node.js and Git Bash are required!
-
-### 2. Open the Project
-
-1. Open the "magazine" folder in VS Code
-
-2. Open terminal in VS Code (Terminal → New Terminal)
-
-4. Type this command and press Enter:
-   npm i
-
-   after that, type this command: 
-
+### 2. Run the Project
+1. Open this project in VS Code
+2. Open terminal (`Ctrl + ~`)
+3. Install dependencies:
+   ```bash
+   npm install
+   ```
+4. Start dev server:
+   ```bash
    npm run dev
+   ```
+5. Click on the local link (`http://localhost:5173/`) to view your website!
 
-   **If you get a script error on Windows, run this :**
+---
 
-   Set-ExecutionPolicy -Scope CurrentUser Unrestricted
+## ⚡ Quick Name Change via `.env`
 
-   after that, try again the commands
+Open `.env` file in the root folder:
+```env
+VITE_RECIPIENT_NAME=uknown 1
+VITE_NICKNAME=uknown
+VITE_SENDER_NAME=Ayush
+VITE_BIRTHDAY_YEAR=2026
+```
+Edit these values, save, and restart `npm run dev` to see the new names updated everywhere across the site!
 
-5. You'll get a local view link
-6. Ctrl + Click on the localhost link to view your website!
+---
 
+## 🎨 How to Customize Content
 
-## 🎨 Customization Guide
+### 📝 1. Change Text & Messages
+Open `src/textConfig.js`:
+- Edit cover page headlines & blurb.
+- Customize the Birthday Letter paragraphs.
+- Update photo captions & finale wishes.
 
-### 📝 How to Change Main Content
+### 📸 2. Change Photos
+Go to `src/images/` folder and replace:
+- `pic1.jpg` (Memory 1)
+- `pic2.gif` (Memory 2)
+- `pic3.jpg` (Memory 3)
+- `intro.gif` (Cover illustration)
+- `letter.png` (Photo pinned to letter)
 
-Go to src folder. 
-Go to components folder. 
-Use CTRL + F and find your text you want to customise.
-Edit Each & Every File For You Customisation. 
-
-## How to change Music 
-Go to music folder. 
-paste your new music there.
-delete previous musics.
-update your music names as music1.mp3, music2.mp3, music3.mp3
-
-## How to change Music Civer
-Go to musiccover folder. 
-paste your new music covers there.
-delete previous music covers.
-update your music names as music1.jpg, music2.jpg, music3.jpg
-Update the same at components folder, PlaylistPage.tsx file. Line 6,7,8
-
-## 🌐 How to Share Your Website
-Watch my tutorial:  https://youtu.be/bFCnDsQwNvA
-
-
-## 🆘 Common Issues & Solutions
-
-### ❌ "Cannot find module" errors
-Solution: Run `npm install` to install all dependencies
-
-### ❌ Images not loading
-Solutions:
-1. Make sure images are in `src/images/` folder
-2. Check the import paths match your file names
-3. Supported formats: `.jpg`, `.png`, `.gif`
-
-### ❌ Music not playing
-Solutions:
-1. Check if `music.mp3` is in the `src/music/` folder
-2. Some browsers block autoplay (user needs to click music button)
-3. File size should be under 10MB
-
-### ❌ Changes not showing
-Solutions:
-1. Save your files (Ctrl+S)
-2. Hard refresh browser (Ctrl+Shift+R)
+### 🎵 3. Change Music & Covers
+- Go to `src/music/` and add your `.mp3` files (`music1.mp3`, `music2.mp3`, `music3.mp3`).
+- Go to `src/musiccover/` and add album art covers (`music1.gif`, `music2.gif`, `music3.jpg`).

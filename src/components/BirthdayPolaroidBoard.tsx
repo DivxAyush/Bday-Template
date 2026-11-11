@@ -63,35 +63,38 @@ export default function BirthdayPolaroidBoard({ onBack, onNext }: Props) {
       {/* Center Deck Area */}
       <div className="w-full max-w-3xl my-auto z-10 flex flex-col items-center justify-center">
         {/* Header */}
-        <div className="text-center mb-2 sm:mb-4 px-2">
+        <div className="text-center mb-1.5 sm:mb-4 px-2">
           <span
-            className="text-[9.5px] sm:text-[11px] uppercase tracking-widest text-[#d84b5a] font-bold"
+            className="text-[9px] sm:text-[11px] uppercase tracking-widest text-[#d84b5a] font-bold"
             style={{ fontFamily: "'Montserrat', sans-serif" }}
           >
             ✦ INTERACTIVE MEMORY SCRAPBOOK ✦
           </span>
           <h1
-            className="text-lg sm:text-2xl md:text-3xl text-[#3d2d2a] font-black tracking-tight mt-0.5 leading-tight"
+            className="text-base sm:text-2xl md:text-3xl text-[#3d2d2a] font-black tracking-tight mt-0.5 leading-tight"
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
             {cfg.title}
           </h1>
-          <p className="text-[11px] sm:text-xs text-[#7a6460] mt-0.5 max-w-md mx-auto line-clamp-1 sm:line-clamp-none">
+          <p className="text-[10px] sm:text-xs text-[#7a6460] mt-0.5 max-w-md mx-auto line-clamp-1 sm:line-clamp-none">
             {cfg.subtitle}
           </p>
         </div>
 
-        {/* --- 3 POLAROID CARDS ROW --- */}
-        <div className="w-full flex items-center justify-center gap-2.5 sm:gap-6 py-1">
+        {/* --- 3 POLAROID CARDS (2 ON TOP, 1 CENTERED ON MOBILE / 3 IN A ROW ON DESKTOP) --- */}
+        <div className="w-full max-w-[305px] sm:max-w-3xl grid grid-cols-2 sm:flex sm:flex-row sm:items-center sm:justify-center gap-2.5 sm:gap-6 py-0.5 sm:py-1">
           {cards.map((card, idx) => {
             const isFlipped = flipped.includes(card.id);
             const photo = PHOTOS[idx % PHOTOS.length];
+            const isThirdCard = idx === 2;
 
             return (
               <div
                 key={card.id}
                 onClick={() => toggleFlip(card.id)}
-                className={`relative cursor-pointer transition-transform duration-300 hover:scale-105 hover:z-30 ${rotations[idx % rotations.length]}`}
+                className={`relative cursor-pointer transition-transform duration-300 hover:scale-105 hover:z-30 ${
+                  isThirdCard ? "col-span-2 justify-self-center mx-auto" : "justify-self-center"
+                } ${rotations[idx % rotations.length]}`}
                 style={{ perspective: "1000px" }}
               >
                 {/* Washi Tape Strip on Top */}
@@ -105,7 +108,7 @@ export default function BirthdayPolaroidBoard({ onBack, onNext }: Props) {
 
                 {/* 3D Flip Card Container */}
                 <div
-                  className="w-[100px] h-[155px] sm:w-[175px] sm:h-[245px] md:w-[200px] md:h-[265px] transition-transform duration-500 rounded-sm sm:rounded-md"
+                  className="w-[140px] h-[155px] sm:w-[175px] sm:h-[245px] md:w-[200px] md:h-[265px] transition-transform duration-500 rounded-sm sm:rounded-md"
                   style={{
                     transformStyle: "preserve-3d",
                     transform: isFlipped ? "rotateY(180deg)" : "rotateY(0deg)",
@@ -115,7 +118,7 @@ export default function BirthdayPolaroidBoard({ onBack, onNext }: Props) {
                   {/* FRONT SIDE: POLAROID PHOTO FRAME */}
                   {/* ======================================================== */}
                   <div
-                    className="absolute inset-0 bg-white rounded-sm sm:rounded-md p-1.5 sm:p-2.5 pb-3 sm:pb-5 shadow-lg border border-[#edd7d3] flex flex-col justify-between"
+                    className="absolute inset-0 bg-white rounded-sm sm:rounded-md p-1.5 sm:p-2.5 pb-2 sm:pb-5 shadow-lg border border-[#edd7d3] flex flex-col justify-between"
                     style={{
                       backfaceVisibility: "hidden",
                       WebkitBackfaceVisibility: "hidden",
@@ -134,7 +137,7 @@ export default function BirthdayPolaroidBoard({ onBack, onNext }: Props) {
                     </div>
 
                     {/* Bottom Handwritten Title */}
-                    <div className="text-center pt-1 sm:pt-1.5 flex flex-col items-center">
+                    <div className="text-center pt-0.5 sm:pt-1.5 flex flex-col items-center">
                       <h3
                         className="text-[#3d2d2a] font-bold text-xs sm:text-base leading-tight truncate w-full"
                         style={{ fontFamily: "'Dancing Script', cursive" }}
@@ -159,8 +162,8 @@ export default function BirthdayPolaroidBoard({ onBack, onNext }: Props) {
                     }}
                   >
                     {/* Card Top Stamp */}
-                    <div className="flex items-center justify-between border-b border-[#f0deda] pb-1">
-                      <span className="text-[7px] sm:text-[8.5px] font-mono uppercase tracking-wider text-[#9c827e]">
+                    <div className="flex items-center justify-between border-b border-[#f0deda] pb-0.5 sm:pb-1">
+                      <span className="text-[7.5px] sm:text-[8.5px] font-mono uppercase tracking-wider text-[#9c827e]">
                         {card.date}
                       </span>
                       <span className="text-[7.5px] sm:text-[9px] bg-[#ffeef2] text-[#d84b5a] font-bold px-1.5 py-0.2 rounded-full border border-[#f5b8c9]">
@@ -168,10 +171,10 @@ export default function BirthdayPolaroidBoard({ onBack, onNext }: Props) {
                       </span>
                     </div>
 
-                    {/* Handwritten Secret Note */}
-                    <div className="my-auto py-1">
+                    {/* Handwritten Secret Note (Clear & readable) */}
+                    <div className="my-auto py-0.5">
                       <p
-                        className="text-[9.5px] sm:text-xs text-[#4a3937] leading-tight sm:leading-relaxed italic"
+                        className="text-[10px] sm:text-xs text-[#4a3937] leading-snug sm:leading-relaxed italic font-medium"
                         style={{ fontFamily: "'Montserrat', sans-serif" }}
                       >
                         "{card.note}"
@@ -179,7 +182,7 @@ export default function BirthdayPolaroidBoard({ onBack, onNext }: Props) {
                     </div>
 
                     {/* Card Bottom Flip Back Pill */}
-                    <div className="border-t border-[#f0deda] pt-1 flex items-center justify-between text-[7px] sm:text-[8.5px] text-[#9c827e]">
+                    <div className="border-t border-[#f0deda] pt-0.5 sm:pt-1 flex items-center justify-between text-[7px] sm:text-[8.5px] text-[#9c827e]">
                       <span className="font-semibold text-[#d84b5a]">Secret Unlocked ✨</span>
                       <span className="flex items-center gap-0.5 hover:text-[#d84b5a]">
                         <span>↻ Photo</span>
@@ -193,7 +196,7 @@ export default function BirthdayPolaroidBoard({ onBack, onNext }: Props) {
         </div>
 
         {/* Unlocked Progress Status Pill */}
-        <div className="mt-3 sm:mt-4 text-center">
+        <div className="mt-1.5 sm:mt-4 text-center">
           <AnimatePresence mode="wait">
             {flipped.length === cards.length ? (
               <motion.div

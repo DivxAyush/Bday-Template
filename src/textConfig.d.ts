@@ -32,11 +32,19 @@ export interface TextConfig {
     nextButton: string;
     replayButton: string;
   };
-  game: {
-    header: string;
-    subtext: string;
-    winHeading: string;
-    winSubtext: string;
+  polaroids: {
+    tagline: string;
+    title: string;
+    subtitle: string;
+    cards: {
+      id: number;
+      title: string;
+      date: string;
+      washiColor: string;
+      note: string;
+      stamp: string;
+    }[];
+    revealedNotice: string;
     nextButton: string;
   };
   letter: {

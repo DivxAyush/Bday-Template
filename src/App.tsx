@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import MagazineCover from "./components/MagazineCover";
 import BirthdayCountdown from "./components/BirthdayCountdown";
-import TicTacLove from "./components/TicTacLove";
+import BirthdayPolaroidBoard from "./components/BirthdayPolaroidBoard";
 import LoveLetter from "./components/LoveLetter";
 import BirthdayFortuneWheel from "./components/BirthdayFortuneWheel";
 import PlaylistPage from "./components/PlaylistPage";
@@ -196,7 +196,7 @@ function App() {
 
           {page === 2 && (
             <motion.div
-              key="tictac"
+              key="polaroid"
               variants={pageVariants}
               initial="initial"
               animate="animate"
@@ -204,7 +204,7 @@ function App() {
               transition={{ duration: 0.35, ease: "easeInOut" }}
               className="w-full h-full flex flex-col justify-center overflow-hidden"
             >
-              <TicTacLove
+              <BirthdayPolaroidBoard
                 onBack={() => goToPage(1)}
                 onNext={() => goToPage(3)}
               />

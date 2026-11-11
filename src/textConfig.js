@@ -66,16 +66,42 @@ export const textConfig = {
       "✦ 100% MAIN CHARACTER ✦",
       "VIBES: INFINITE 🌟",
     ],
-    nextButton: "Enter The Birthday Game →",
+    nextButton: "Open Memory Board →",
     replayButton: "↺ Replay Midnight Drop",
   },
 
-  // 3. INTERACTIVE BIRTHDAY GAME (Tic Tac Toe / Match)
-  game: {
-    header: "Unlock Your Birthday Wishes! 🎈",
-    subtext: "Connect three cakes or balloons to unlock the special surprise",
-    winHeading: "🎉 YOU WON A YEAR OF HAPPINESS! 🎉",
-    winSubtext: "May all your secret wishes and brightest dreams come true this year!",
+  // 3. VINTAGE POLAROID MEMORY BOARD (Replaced Tic-Tac-Toe Game)
+  polaroids: {
+    tagline: "VINTAGE MEMORY ARCHIVE",
+    title: "Moments & Secret Notes 📸",
+    subtitle: "Tap on each polaroid to flip it and reveal the hidden secret message behind it! 💌",
+    cards: [
+      {
+        id: 1,
+        title: "Pure Sunshine ☀️",
+        date: "Chapter Moments",
+        washiColor: "#ffd6df",
+        note: `Never lose that radiant, warm energy of yours, ${envRecipient}. You have this effortless way of lighting up every single room you enter! 💖`,
+        stamp: "SWEET 🌸",
+      },
+      {
+        id: 2,
+        title: "Queen Era 👑",
+        date: `Chapter ${envNewAge}`,
+        washiColor: "#ffe8b3",
+        note: `May your ${envNewAge}rd year give you all the grand wins, unmatched confidence, and unapologetic queen treatment you deserve! 👑✨`,
+        stamp: "QUEEN 👑",
+      },
+      {
+        id: 3,
+        title: "Unfiltered Smiles 🌸",
+        date: "Pure Vibes",
+        washiColor: "#d4f0f0",
+        note: "Here's to late-night laughs, cozy memories, zero overthinking, and 365 days of peace and boundless happiness! 🥂✨",
+        stamp: "FOREVER 💌",
+      },
+    ],
+    revealedNotice: "✨ All 3 Secret Polaroid Notes Revealed! ✨",
     nextButton: "Read Birthday Letter →",
   },
 

@@ -249,3 +249,4 @@ export default function BirthdayPolaroidBoard({ onBack, onNext }: Props) {
     </div>
   );
 }
+

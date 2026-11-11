@@ -2,23 +2,23 @@ import React, { useEffect, useRef } from "react";
 
 const GRID_SIZE = 32;
 
-// Aesthetic celebratory palette matching the pink & gold grid theme
-const GLOW_COLORS = [
-  "#ff4d6d", // Hot pink
-  "#ff758c", // Soft rose
+// Romantic & celebratory heart color palette
+const HEART_COLORS = [
+  "#ff4d6d", // Vibrant rose
+  "#ff758f", // Soft petal pink
   "#f72585", // Berry magenta
-  "#ffd166", // Champagne gold
-  "#ff85a2", // Pastel blush
-  "#06d6a0", // Mint sparkle
-  "#e76077", // Coral crimson
+  "#ff5c8a", // Romantic blush
+  "#ff85a1", // Pastel blossom
+  "#ffb703", // Champagne golden heart
+  "#e75480", // Classic deep pink
 ];
 
-// Speeds that divide 32 evenly so particles ALWAYS land on exact grid intersections
-const VALID_SPEEDS = [1, 2, 2, 2, 4];
+// Slower, graceful speeds that divide 32 evenly (64, 40, or 32 frames per grid cell)
+const VALID_SPEEDS = [0.5, 0.8, 1.0];
 
 type Direction = "UP" | "DOWN" | "LEFT" | "RIGHT";
 
-interface DotParticle {
+interface HeartParticle {
   x: number;
   y: number;
   dir: Direction;
@@ -29,6 +29,7 @@ interface DotParticle {
   maxTrail: number;
   life: number;
   maxLife: number;
+  pulseOffset: number;
 }
 
 export default function GridRunners() {
@@ -53,23 +54,22 @@ export default function GridRunners() {
 
     window.addEventListener("resize", handleResize);
 
-    // Number of active dots (fewer on mobile for peak performance)
+    // Number of active hearts
     const isMobile = width < 768;
-    const PARTICLE_COUNT = isMobile ? 16 : 30;
+    const PARTICLE_COUNT = isMobile ? 14 : 26;
 
-    const createParticle = (spawnRandomLocation = true): DotParticle => {
+    const createHeart = (spawnRandomLocation = true): HeartParticle => {
       const maxCols = Math.max(1, Math.floor(width / GRID_SIZE));
       const maxRows = Math.max(1, Math.floor(height / GRID_SIZE));
 
-      // Choose an exact grid line coordinate
       const col = Math.floor(Math.random() * maxCols);
       const row = Math.floor(Math.random() * maxRows);
 
       const dirs: Direction[] = ["UP", "DOWN", "LEFT", "RIGHT"];
       const dir = dirs[Math.floor(Math.random() * dirs.length)];
       const speed = VALID_SPEEDS[Math.floor(Math.random() * VALID_SPEEDS.length)];
-      const color = GLOW_COLORS[Math.floor(Math.random() * GLOW_COLORS.length)];
-      const maxLife = 180 + Math.floor(Math.random() * 220); // 3 to 7 seconds
+      const color = HEART_COLORS[Math.floor(Math.random() * HEART_COLORS.length)];
+      const maxLife = 260 + Math.floor(Math.random() * 260); // 4 to 8 seconds
 
       return {
         x: spawnRandomLocation ? col * GRID_SIZE : 0,
@@ -77,41 +77,77 @@ export default function GridRunners() {
         dir,
         speed,
         color,
-        size: Math.random() > 0.6 ? 3.5 : 2.5,
+        size: isMobile ? 4.5 : 5.5,
         trail: [],
-        maxTrail: 10 + Math.floor(Math.random() * 12),
+        maxTrail: 10 + Math.floor(Math.random() * 10),
         life: maxLife,
         maxLife,
+        pulseOffset: Math.random() * Math.PI * 2,
       };
     };
 
-    // Initialize particles
-    const particles: DotParticle[] = [];
+    const particles: HeartParticle[] = [];
     for (let i = 0; i < PARTICLE_COUNT; i++) {
-      particles.push(createParticle(true));
+      particles.push(createHeart(true));
     }
+
+    // Draw a neat symmetrical heart centered at (0, 0)
+    const drawHeart = (
+      c: CanvasRenderingContext2D,
+      cx: number,
+      cy: number,
+      scale: number,
+      color: string,
+      alpha: number
+    ) => {
+      c.save();
+      c.translate(cx, cy);
+      c.globalAlpha = alpha;
+      c.shadowColor = color;
+      c.shadowBlur = 8;
+      c.fillStyle = color;
+
+      const s = scale * 0.25;
+      c.beginPath();
+      c.moveTo(0, -1.2 * s);
+      // Left curve
+      c.bezierCurveTo(-2.8 * s, -4.8 * s, -6 * s, -1.2 * s, 0, 5 * s);
+      // Right curve
+      c.bezierCurveTo(6 * s, -1.2 * s, 2.8 * s, -4.8 * s, 0, -1.2 * s);
+      c.fill();
+
+      // Tiny inner sparkle highlight
+      c.shadowBlur = 1;
+      c.fillStyle = "#ffffff";
+      c.globalAlpha = alpha * 0.7;
+      c.beginPath();
+      c.arc(0, -0.4 * s, s * 0.75, 0, Math.PI * 2);
+      c.fill();
+
+      c.restore();
+    };
 
     const render = () => {
       ctx.clearRect(0, 0, width, height);
 
       particles.forEach((p, idx) => {
-        // Calculate fade opacity
+        // Calculate smooth fade-in and fade-out
         const fadeRatio = p.life / p.maxLife;
         let alpha = 1;
         if (fadeRatio > 0.85) {
-          alpha = (1 - fadeRatio) / 0.15; // Fade in
-        } else if (fadeRatio < 0.2) {
-          alpha = fadeRatio / 0.2; // Fade out
+          alpha = (1 - fadeRatio) / 0.15;
+        } else if (fadeRatio < 0.18) {
+          alpha = fadeRatio / 0.18;
         }
         alpha = Math.max(0, Math.min(1, alpha));
 
-        // Save current point in trail
+        // Save position in trail
         p.trail.unshift({ x: p.x, y: p.y });
         if (p.trail.length > p.maxTrail) {
           p.trail.pop();
         }
 
-        // Draw light trail along the grid line
+        // Draw soft fading trail along the grid line
         if (p.trail.length > 1) {
           ctx.beginPath();
           ctx.moveTo(p.trail[0].x, p.trail[0].y);
@@ -119,32 +155,21 @@ export default function GridRunners() {
             ctx.lineTo(p.trail[i].x, p.trail[i].y);
           }
           ctx.strokeStyle = p.color;
-          ctx.lineWidth = 1.8;
+          ctx.lineWidth = 1.6;
           ctx.lineCap = "round";
           ctx.lineJoin = "round";
-          ctx.globalAlpha = alpha * 0.45;
+          ctx.globalAlpha = alpha * 0.35;
           ctx.stroke();
         }
 
-        // Draw glowing head dot
-        ctx.save();
-        ctx.globalAlpha = alpha * 0.9;
-        ctx.shadowColor = p.color;
-        ctx.shadowBlur = 10;
-        ctx.fillStyle = p.color;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fill();
+        // Heart gentle pulse scale
+        const pulse = 1 + 0.15 * Math.sin(p.life * 0.08 + p.pulseOffset);
+        const currentSize = p.size * pulse;
 
-        // Inner bright white spark for high-tech jewel glow
-        ctx.shadowBlur = 2;
-        ctx.fillStyle = "#ffffff";
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size * 0.5, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
+        // Draw the heart
+        drawHeart(ctx, p.x, p.y, currentSize, p.color, alpha * 0.9);
 
-        // Move particle along current direction
+        // Move heart along the grid line (slow and gentle)
         switch (p.dir) {
           case "RIGHT":
             p.x += p.speed;
@@ -160,12 +185,17 @@ export default function GridRunners() {
             break;
         }
 
-        // Check if currently at a grid intersection
-        const isAtIntersection = p.x % GRID_SIZE === 0 && p.y % GRID_SIZE === 0;
+        // Check if at a 32px grid intersection (with floating precision check)
+        const nearGridX = Math.abs(p.x - Math.round(p.x / GRID_SIZE) * GRID_SIZE) < 0.05;
+        const nearGridY = Math.abs(p.y - Math.round(p.y / GRID_SIZE) * GRID_SIZE) < 0.05;
 
-        if (isAtIntersection) {
-          // 25% chance to make a sharp 90-degree turn along the grid!
-          if (Math.random() < 0.25) {
+        if (nearGridX && nearGridY) {
+          // Snap strictly to the intersection line
+          p.x = Math.round(p.x / GRID_SIZE) * GRID_SIZE;
+          p.y = Math.round(p.y / GRID_SIZE) * GRID_SIZE;
+
+          // 28% chance to turn at corners
+          if (Math.random() < 0.28) {
             if (p.dir === "LEFT" || p.dir === "RIGHT") {
               p.dir = Math.random() > 0.5 ? "UP" : "DOWN";
             } else {
@@ -174,7 +204,7 @@ export default function GridRunners() {
           }
         }
 
-        // Screen boundaries - reverse direction or turn
+        // Screen boundary checks
         if (p.x <= 0) {
           p.x = 0;
           p.dir = "RIGHT";
@@ -190,11 +220,10 @@ export default function GridRunners() {
           p.dir = "UP";
         }
 
-        // Decrease life
+        // Lifecycle
         p.life -= 1;
         if (p.life <= 0) {
-          // Respawn anew
-          particles[idx] = createParticle(true);
+          particles[idx] = createHeart(true);
         }
       });
 
